@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 class TodoDaySerializer(serializers.ModelSerializer):
     class Meta:
         model = TodoDay
-        fields = ('id', 'title', 'calendarDay', 'author')
+        fields = ('id', 'completed', 'title', 'calendarDay', 'author')
 
 
 class TodosSerializer(serializers.ModelSerializer):

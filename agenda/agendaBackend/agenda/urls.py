@@ -14,5 +14,6 @@ urlpatterns = [
     path('auth/logout', views.Logout.as_view(), name='logout'),
     path('auth/register', views.Register.as_view(), name='register'),
     path('loadTasks', views.LoadTasks.as_view(), name="loadTasks"),
+    path('toggleCompletedTasks', views.ToggleCompletedTasks.as_view(), name='toggleCompletedTasks'),
     path('', include(router.urls)),
 ]

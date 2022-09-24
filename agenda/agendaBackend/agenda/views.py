@@ -99,40 +99,57 @@ class Register(APIView):
 class LoadTasks(APIView):
 
     def post(self,request):
-        tododay = TodoDay.objects.first()
-        todos = tododay.todos.all()
-        todoss = TodosSerializer(todos.first()).data
-        print('**********')
-        print(tododay)
-        print('**********')
-        print(tododay.todos.all())
-        print('**********')
-        print(todos)
-        print('**********')
-        print(todoss)
-        print('**********')
-        for todo in todos:
-            print(TodosSerializer(todo).data)
-            print('****')
-        response = TodoDaySerializer(tododay).data
-        # print(tododay.todos.all())
+        # get userid from request
+        userId = request.data['userId']
+
+        # lists for response
+        response = []
+        todosList = []
+
+        # loop through days 
+        for day in TodoDay.objects.all().filter(author=userId, completed=False):
+            todosList = []
+            thisday = TodoDaySerializer(day).data
+
+            # loop through day todos in each day
+            for todo in day.todos.all():
+                todosList.append(TodosSerializer(todo).data)
+
+            # add response to response
+            response.append({
+                "id": thisday['id'],
+                "title": thisday['title'],
+                "date": thisday['calendarDay'],
+                "todos": todosList
+            })
         
         return Response(response, status=status.HTTP_200_OK)
 
 
-        
-# class TestApi(APIView):
+class ToggleCompletedTasks(APIView):
 
-    
+    def put(self,request):
+        # get data from request
+        dayId = request.data['dayId']
+        todoId = request.data['todoId']
+        completed = request.data['completed']
 
-#     def post(self, request):
-#         sertest = UserSerializer(User.objects.first())
-#         print("******************")
-#         print(User.objects.first().username)
-#         print(sertest.data)
+        # day object
+        day = TodoDay.objects.get(id=dayId)
 
-#         test = {
-#             "test": "test"
-#         }
-        
-#         return Response(sertest.data)
+        # if tododay is checked, complete whole day
+        if not todoId:
+            for todo in day.todos.all():
+                todo.completed = completed
+                todo.save()
+
+            day.completed = completed
+            day.save()
+
+        # if todo is checked, complete todo
+        if todoId:
+            todo = day.todos.get(id=todoId)
+            todo.completed = completed
+            todo.save()
+
+        return Response({'message': 'toggle completed'}, status=status.HTTP_200_OK)
