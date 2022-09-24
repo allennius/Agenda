@@ -6,7 +6,9 @@ from django.db import models
 
 # user
 class User(AbstractUser):
-    pass
+    
+    def __str__(self):
+        return self.username
 
 # todo
 class TodoDay(models.Model):

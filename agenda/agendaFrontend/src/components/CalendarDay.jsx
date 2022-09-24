@@ -102,10 +102,12 @@ function CalendarDay() {
                 <div className="task"> 
                     <p> task title </p>
                     <p> task </p>
-                    <input type="checkbox" id="task" />
-                    <label for="task"> task done?</label>
+                    <label>
+                        <input type="checkbox" id="task" />
+                        <span> task done </span>
+                    </label>
                 </div>
-                <input type="button" value="update" className="btn btn-primary" />
+                <input type="button" value="update" className="btn-primary-calendarDay btn btn-primary" />
             </div>
             <div className="gap"> ---------- </div>
             <div className="task-form">
@@ -137,10 +139,10 @@ function CalendarDay() {
                     {/* if + button is clicked showinput[i] toggles to true and addInputField runs */}
                     {showInput[0] ? addInputField() : 
                         <div className="form-group">
-                            <input type="button" data-key="0" onClick={addInput} className="btn btn-secondary" value="+" />
+                            <input type="button" data-key="0" onClick={addInput} className="btn-secondary-calendarDay btn btn-secondary" value="+" />
                         </div>
                         }
-                    <input type="submit" className="btn btn-primary" value="Add Task" />
+                    <input type="submit" className="btn-primary-calendarDay btn btn-primary" value="Add Task" />
                 </form>
             </div>
         </ div>

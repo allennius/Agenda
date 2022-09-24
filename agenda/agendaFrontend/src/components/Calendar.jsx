@@ -68,7 +68,7 @@ function Calendar() {
                         {daysInWeek.map((weekday) => {
                             return ( 
                                 <div key={weekday} className="calendar-weekday">
-                                   <h6>{weekday}</h6>
+                                   <h6 key={weekday}>{weekday}</h6>
                                 </div>
                             )
                         })}

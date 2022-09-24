@@ -1,0 +1,10 @@
+.login, .register{
+    width: 250px;
+    text-align: center;
+    margin: 5em auto;
+}
+
+.err-msg {
+    color: red;
+    font-size: 0.8em;
+}

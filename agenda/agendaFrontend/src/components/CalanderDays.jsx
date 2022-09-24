@@ -52,14 +52,12 @@ function CalendarDays(props) {
     return (
         calendardays.map((day) => {
             return (
-                <>
                     <Link key={day.day} to="CalendarDay" state={{ day: day.day }}>
                         <div key={day.day} className={"calendar-day " + (day.isMonth ? "current-month " : "not-current-month") + (day.isToday ? "current-day" : "")}>
                             <p key={day.day}>{day.day.getDate()}</p>
                             {/* {clicked[index] ? <CalendarDay day={day.day} /> : null} */}
                         </div>
                     </Link>
-                </>
             )
         })
     )
