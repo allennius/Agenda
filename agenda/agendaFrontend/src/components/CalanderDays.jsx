@@ -29,13 +29,8 @@ function CalendarDays(props) {
             })
             .then(response => response.json())
             .then(data => {
-                // let object = []
 
-                // data.forEach((element) => {
-                //     object.push(element)
-                // })
                 setTasks(data)
-                loadTasksToCalendar()
 
             })
             .catch(error => console.log(error))
@@ -104,16 +99,6 @@ function CalendarDays(props) {
         dayTracker.setDate(dayTracker.getDate() + 1)
 
     }
-
-    // // keep track on if day is sopposed to be rendered
-    // const [clicked, setClicked] = useState(false)    
-
-    // const CallCalendarDay = (index) => {
-    //     console.log(clicked)
-    //     setClicked(prevState => ({
-    //         [index]: !prevState[index]
-    //     }))
-    // }
 
     return (
         calendardays.map((day) => {
