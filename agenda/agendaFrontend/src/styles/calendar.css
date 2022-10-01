@@ -63,7 +63,7 @@
     font-size: 0.8em;
     color: #858585;
 }
-.current-day {
+.current-day p {
     color: red;
     text-decoration: underline;
 }
@@ -96,6 +96,25 @@
     transform: rotate(135deg);
 }
 
+.todo-in-calendar {
+    margin: auto;
+    position: relative;
+    top: -1.2em;
+    border-radius: 10px;
+    max-width: 90%;
+    height: 1.5em;
+    background-color: rgb(116, 196, 236);  
+    text-align: center;
+    overflow: hidden;
+}
+.todo-in-calendar small {
+    color: darkgoldenrod;
+    font-size: 0.8em;
+    padding: 0.5em;
+    position: relative;
+    bottom: 0.15em;
+}
+
 
 
 /* responsove to screen size */
@@ -116,6 +135,16 @@
     .calendar-weekday {
         width: 80px;
         margin: 0px 27px 0px 26px;
+    }
+
+    .todo-in-calendar {
+        top: -25px;
+        height: 1.2em;
+        font-size: 0.8em;
+    }
+    .todo-in-calendar small {
+        position: relative;
+        bottom: 0.35em;
     }
 }
 
@@ -148,6 +177,14 @@
     }
     .calendar-weekday h6 {
         font-size: 0.7em;
+    }
+
+    .todo-in-calendar {
+        top: -1.1em;
+        height: 1.5em;
+    }
+    .todo-in-calendar small {
+        bottom: 0.1em;
     }
     
 }

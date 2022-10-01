@@ -1,13 +1,79 @@
 import React from "react";
-// import { useState } from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import { Link } from 'react-router-dom';
+import CSRFTOKEN from "../csrftoken";
 // import CalendarDay from "./CalendarDay";
 
 
 function CalendarDays(props) {
+
+    // const initialState = [{day: 0, title: ''}]
+    const [tasks, setTasks] = useState([])
+
+
+    // fetch this months tasks, update when props change
+    useEffect(() => {
+        if (localStorage.getItem('userId')){
+            fetch('/api/loadTasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    userId: localStorage.getItem('userId'),
+                    year: props.calendar.year,
+                    month: props.calendar.month,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // let object = []
+
+                // data.forEach((element) => {
+                //     object.push(element)
+                // })
+                setTasks(data)
+                loadTasksToCalendar()
+
+            })
+            .catch(error => console.log(error))
+            
+        }
+    }, [props])
+
+
+    const loadTasksToCalendar = (day) => {
+
+        let taskToday = false
+        let title = ''
+
+        tasks.forEach((element) => {
+            
+            if (element['day'] === day){
+                if (taskToday) {
+                    title = `( + 1 ) ${title}`
+                } else {
+                    title = element['title']
+                }
+                taskToday = true
+                
+            }        
+        })
+        
+        return (
+            taskToday 
+            ? 
+            <div className="todo-in-calendar"><small>{title}</small></div> 
+            :
+            <div></div>
+        )
+    }
+
     // first date of the month
     let dayTracker = new Date(props.calendar.year, props.calendar.month, 1)
-
+    
     let calendardays = []
 
     // set tracker to be first day you want in your month
@@ -53,8 +119,13 @@ function CalendarDays(props) {
         calendardays.map((day) => {
             return (
                     <Link key={day.day} to="CalendarDay" state={{ day: day.day }}>
+                        <CSRFTOKEN />
                         <div key={day.day} className={"calendar-day " + (day.isMonth ? "current-month " : "not-current-month") + (day.isToday ? "current-day" : "")}>
                             <p key={day.day}>{day.day.getDate()}</p>
+                            {day.isMonth && tasks[0] ? loadTasksToCalendar(day.day.getDate()) :
+                                <div></div>
+                                // <div className="todo-in-calendar"><small>get</small></div>
+                            }       
                             {/* {clicked[index] ? <CalendarDay day={day.day} /> : null} */}
                         </div>
                     </Link>

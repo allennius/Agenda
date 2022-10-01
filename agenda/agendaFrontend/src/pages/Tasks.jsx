@@ -1,29 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
+import { useEffect, useState } from "react";
 import CSRFTOKEN from "../csrftoken";
 import "../styles/tasks.css"
 
 const Tasks = () => {
 
-    const tasks = [{
-        "id": 1,
-        "completed": "false",
-        "title": "clean car",
-        "date": "12",
-        todos: ["vaccum and clean vindshield"]
-    },
-    {
-        "id": 3,
-        "completed": "false",
-        "title": "cut lawn",
-        "date": "15",
-        todos: [
-            "front side",
-            "left side",
-            "side side"
-        ],
-    }]
+    const [tasks, setTasks] = useState([])
     
-    const loadTasks = () => {
+    useEffect(() => {
         if (localStorage.getItem('userId')){
             const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
             fetch("/api/loadTasks", {
@@ -39,36 +23,83 @@ const Tasks = () => {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-                console.log(data.title)
+                if(data){
+                    setTasks(data)
+                    loadTodos()
+                }
             })
             .catch(error => console.log(error))
         }
-    }
+    }, []);
 
+
+    const loadTodos = () => {
+        return (
+            <>
+                {tasks.map((task) => {
+                    return( 
+                        <div key={task['id']}>
+                            <div className="todo-list">
+                                <div className="todo-check">
+                                    <input data-key={'todoDay'} data-id={task['id']} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
+                                </div>
+                                <div className="todo-title">
+                                    <small>{task['title']}</small>
+                                </div>
+                                <div className="todo-date">
+                                    <small>{task['date']}</small>
+                                </div>
+                                <div className="todo-todo">
+                                    {task['todos'].map((todo) => (
+                                        <div key={todo['id']}>
+                                            {todo['completed'] 
+                                                ?
+                                                <input checked={true} data-key={'todo'} data-dayid={task['id']} data-id={todo['id']} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
+                                                :
+                                                <input data-key={'todo'} data-dayid={task['id']} data-id={todo['id']} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
+                                            }
+                                            
+                                            <small className={todo['completed'] ? 'checked' : ''}>{todo['todo']}</small>
+                                        </div>
+                                        )
+                                    )}                            
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })}
+            </>
+        )
+    }
+ 
 
     const toggleCompleted = (e) => {
 
         (e.checked && e.dataset.key === 'todoDay') ? e.parentElement.parentElement.classList.add('checked') :
             e.parentElement.parentElement.classList.remove('checked')
 
-       
+            e.checked = e.checked ? true : false
+
+
+        const dayId = (e.dataset.dayid) ? e.dataset.dayid : e.dataset.id
+        const todoId = (e.dataset.dayid) ? e.dataset.id : null
 
         fetch('/api/toggleCompletedTasks', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
             body: JSON.stringify({
-                id: e.value,
+                dayId: dayId,
+                todoId: todoId,
                 completed: e.checked  
             })
         })
-        .then(response => console.log(response))
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch(error => console.log(error))
             
         
-
-    }
-
-    const updateTasks = () => {
 
     }
 
@@ -76,33 +107,16 @@ const Tasks = () => {
         <div className="tasks-container">
             <CSRFTOKEN />
             <div className="todo-list"></div>
-                {tasks.map((task, index) => {
-                    return (
-                        <div key={index} className="todo-list">
-                            <div className="todo-check">
-                                <input data-key={'todoDay'} onChange={e => toggleCompleted(e.target)} type="checkbox" value={task['id']} className={' form-check-input'}/>
-                            </div>
-                            <div className="todo-title">
-                                <small>{task['title']}</small>
-                            </div>
-                            {/* <div className="todo-date">
-                                <small>{task['date']}</small>
-                            </div> */}
-                            <div className="todo-todo">
-                                
-                                {task.todos.map((todo) => (
-                                    <p>
-                                        <input data-key={'todo'} onChange={e => toggleCompleted(e.target)} type="checkbox" value={task['id']} className={' form-check-input'}/>
-                                        <small>{todo}</small>
-                                    </p>
-                                    )
-                                )}                            
-                        </div>
-                        <div></div>
-                    </div>
-                )
-            })}
-            <input onClick={loadTasks} type="button" className="btn btn-primary" value="Update" />
+
+            {/* check if there is any todos */}
+            {tasks[0] 
+                ?
+                <div>{loadTodos()}</div>
+                :
+                <div><h3>Nothing todo</h3></div>
+                }
+
+            <input onClick={() => window.location.reload()} type="button" className="btn btn-primary" value="Update" />
         </div>
     )
 }

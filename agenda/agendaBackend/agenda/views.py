@@ -1,3 +1,5 @@
+from http.client import ResponseNotReady
+from os import stat
 from sqlite3 import IntegrityError
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
@@ -99,13 +101,35 @@ class Register(APIView):
 class LoadTasks(APIView):
 
     def post(self,request):
+
         # get userid from request
         userId = request.data['userId']
 
         # lists for response
         response = []
-        todosList = []
 
+        # if month in request then get data for calander
+        if 'month' and 'year' in request.data:
+            calendarMonth = request.data['month']
+            calendarYear = request.data['year']
+
+            # filter so only calendarmonth is collected
+            tasks = TodoDay.objects.all().filter(author=userId, completed=False, calendarDay__year=calendarYear, calendarDay__month=calendarMonth+1)
+
+            # for task in tasks:
+            for task in tasks:
+                response.append({
+                    'title': task.title,
+                    'day': task.calendarDay.day
+                })
+            
+            return Response(response, status=status.HTTP_200_OK)
+            # month = data[0].calendarDay.month - 1
+            # return Response(tasks, status=status.HTTP_200_OK)
+
+
+
+        # if no month in request get data for tasks page
         # loop through days 
         for day in TodoDay.objects.all().filter(author=userId, completed=False):
             todosList = []
