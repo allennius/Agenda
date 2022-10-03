@@ -18,6 +18,7 @@ const Tasks = () => {
                     'X-CSRFToken': csrftoken,
                 },
                 body: JSON.stringify({
+                    tasks: true,
                     userId: localStorage.getItem('userId')
                 })
             })

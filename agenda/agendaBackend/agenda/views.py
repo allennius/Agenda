@@ -108,14 +108,38 @@ class LoadTasks(APIView):
         # lists for response
         response = []
 
-        # if month in request then get data for calander
-        if 'month' and 'year' in request.data:
-            calendarMonth = request.data['month']
+
+        # if request comes from calendarDay
+        if 'calendarDay' in request.data:
             calendarYear = request.data['year']
+            calendarMonth = request.data['month']
+            calendarDay = request.data['date']
+            
+            # loop through tasks and add to response
+            for day in TodoDay.objects.all().filter(author=userId, completed=False, calendarDay__year=calendarYear, calendarDay__month=calendarMonth+1, calendarDay__day=calendarDay):
+                todosList = []
+
+                # loop thorugh todos in task and add to response 
+                for todo in day.todos.all():
+                    todosList.append(TodosSerializer(todo).data)
+
+                response.append({
+                    "id": day.id,
+                    "title": day.title,
+                    "date": day.calendarDay,
+                    "todos": todosList
+                })
+
+            return Response(response, status=status.HTTP_200_OK)
+
+
+        # if request comes from calendarDays
+        if 'calendarDays' in request.data:
+            calendarYear = request.data['year']
+            calendarMonth = request.data['month']
 
             # filter so only calendarmonth is collected
             tasks = TodoDay.objects.all().filter(author=userId, completed=False, calendarDay__year=calendarYear, calendarDay__month=calendarMonth+1)
-
             # for task in tasks:
             for task in tasks:
                 response.append({
@@ -128,27 +152,30 @@ class LoadTasks(APIView):
             # return Response(tasks, status=status.HTTP_200_OK)
 
 
+        # if request comes from tasks
+        if 'tasks' in request.data:
+            # loop through days 
+            for day in TodoDay.objects.all().filter(author=userId, completed=False):
+                todosList = []
 
-        # if no month in request get data for tasks page
-        # loop through days 
-        for day in TodoDay.objects.all().filter(author=userId, completed=False):
-            todosList = []
-            thisday = TodoDaySerializer(day).data
+                # loop through day todos in each day
+                for todo in day.todos.all():
+                    todosList.append(TodosSerializer(todo).data)
 
-            # loop through day todos in each day
-            for todo in day.todos.all():
-                todosList.append(TodosSerializer(todo).data)
+                # add response to response
+                response.append({
+                    "id": day.id,
+                    "title": day.title,
+                    "date": day.calendarDay,
+                    "todos": todosList
+                })
+            
+            return Response(response, status=status.HTTP_200_OK)
 
-            # add response to response
-            response.append({
-                "id": thisday['id'],
-                "title": thisday['title'],
-                "date": thisday['calendarDay'],
-                "todos": todosList
-            })
-        
-        return Response(response, status=status.HTTP_200_OK)
 
+        # else send back failed response
+        response = [{'error': 'failed request'}]
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 class ToggleCompletedTasks(APIView):
 

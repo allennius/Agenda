@@ -1,10 +1,11 @@
 import React from "react";
 import { useLocation } from 'react-router-dom'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NoPage from "../pages/NoPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap/dist/js/bootstrap.min.js";
 import "../styles/calendarDay.css"
+import CSRFTOKEN from "../csrftoken";
 
 
 function CalendarDay() {
@@ -20,7 +21,6 @@ function CalendarDay() {
             <NoPage />
         )
     }
-
     // to get monthname from monthnumber
     const months = ["January", "Februari", "March", "April", "May", "June",
     "Juli", "August", "September", "October", "November", "December"
@@ -28,6 +28,38 @@ function CalendarDay() {
 
     // use state to update form
     const [inputs, setInputs] = useState({})
+    // data retrieved from fetch request
+    const [tasks, setTasks] = useState([])
+
+    // useEffect to load data on page render
+    useEffect(() => {
+        loadTasks()
+    }, [])
+
+    const loadTasks = () => {
+        if (localStorage.getItem('userId')) {
+            fetch('/api/loadTasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify({
+                    calendarDay: true,
+                    userId: localStorage.getItem('userId'),
+                    year: day.day.getFullYear(),
+                    month: day.day.getMonth(),
+                    date: day.day.getDate(),
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                setTasks(data)
+                console.log(data)
+            })
+            .catch(error => console.log(error))
+        }
+    }
 
     // update values in form
     const handleChange = (event) => {
@@ -95,20 +127,38 @@ function CalendarDay() {
 
     return (
         <div className="add-task-container">
+            <CSRFTOKEN />
             <div className="task-header">
                 <h6 className="header"> {day.day.getDate()} {months[day.day.getMonth()]}  {day.day.getFullYear()} </h6>
             </div>
-            <div className="tasks">
-                <div className="task"> 
-                    <p> task title </p>
-                    <p> task </p>
-                    <label>
-                        <input type="checkbox" id="task" />
-                        <span> task done </span>
-                    </label>
+            {tasks[0] &&     
+                <div className="tasks">
+                    {tasks.map((task) => {
+                        return(  
+                            <div key={task.id} className="task"> 
+                                <p> {task.title} </p>
+                                <div className="checkboxTodo">
+                                {task.todos.map((todo) => {
+                                    return (
+                                            <label key={todo.id}>
+                                                <input type="checkbox" id="todo" />
+                                                <span> {todo.todo} </span>
+                                            </label>
+                                    )
+                                })}
+                                </div>
+                                <div className="checkboxTask">
+                                    <label>
+                                        <input type="checkbox" id="task" />
+                                        <span> check {task.title} </span>
+                                    </label>
+                                </div>
+                            </div>
+                        )
+                    })}
+                    <input type="button" value="update" className="btn-primary-calendarDay btn btn-primary" />
                 </div>
-                <input type="button" value="update" className="btn-primary-calendarDay btn btn-primary" />
-            </div>
+            }
             <div className="gap"> ---------- </div>
             <div className="task-form">
                 <form onSubmit={handleSubmit}>

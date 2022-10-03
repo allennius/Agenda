@@ -22,6 +22,7 @@ function CalendarDays(props) {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 },
                 body: JSON.stringify({
+                    calendarDays: true,
                     userId: localStorage.getItem('userId'),
                     year: props.calendar.year,
                     month: props.calendar.month,
@@ -41,24 +42,30 @@ function CalendarDays(props) {
 
     const loadTasksToCalendar = (day) => {
 
-        let taskToday = false
+        let taskCounter = 0
         let title = ''
 
+        // loop through tasks for this month for this user
         tasks.forEach((element) => {
-            
+            // if day is in the task list then add to counter
             if (element['day'] === day){
-                if (taskToday) {
-                    title = `( + 1 ) ${title}`
+                taskCounter++ 
+
+                // if more than one task on same day show number of tasks
+                if (taskCounter > 1) {
+                    title = `( ${taskCounter} tasks )`
+
+                    // else show title
                 } else {
                     title = element['title']
                 }
-                taskToday = true
-                
             }        
         })
         
+        // if day is in task list then return div as notification
+        //  else return empty
         return (
-            taskToday 
+            taskCounter > 0 
             ? 
             <div className="todo-in-calendar"><small>{title}</small></div> 
             :

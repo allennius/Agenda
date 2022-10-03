@@ -43,6 +43,16 @@
     margin: auto;
 }
 
+.checkboxTodo {
+    display: flex;
+    flex-flow: column;
+    margin-bottom: 5px;
+}
+.checkboxTask {
+    border-top: 1px solid black;
+    font-size: 1.1em;
+}
+
 @media only screen and (max-width: 500px) {
     #root {
         width: 300px;
