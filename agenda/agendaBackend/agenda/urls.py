@@ -15,5 +15,6 @@ urlpatterns = [
     path('auth/register', views.Register.as_view(), name='register'),
     path('loadTasks', views.LoadTasks.as_view(), name="loadTasks"),
     path('toggleCompletedTasks', views.ToggleCompletedTasks.as_view(), name='toggleCompletedTasks'),
+    path('addTask', views.AddTask.as_view(), name="addTask"),
     path('', include(router.urls)),
 ]

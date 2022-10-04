@@ -50,7 +50,10 @@
 }
 .checkboxTask {
     border-top: 1px solid black;
-    font-size: 1.1em;
+}
+
+.check {
+    text-decoration: line-through;
 }
 
 @media only screen and (max-width: 500px) {

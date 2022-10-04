@@ -26,6 +26,7 @@ const Tasks = () => {
             .then(data => {
                 if(data){
                     setTasks(data)
+                    console.log(data)
                     loadTodos()
                 }
             })
@@ -39,28 +40,28 @@ const Tasks = () => {
             <>
                 {tasks.map((task) => {
                     return( 
-                        <div key={task['id']}>
+                        <div key={task.task.id}>
                             <div className="todo-list">
                                 <div className="todo-check">
-                                    <input data-key={'todoDay'} data-id={task['id']} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
+                                    <input data-key={'todoDay'} data-id={task.task.id} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
                                 </div>
                                 <div className="todo-title">
-                                    <small>{task['title']}</small>
+                                    <small>{task.task.title}</small>
                                 </div>
                                 <div className="todo-date">
-                                    <small>{task['date']}</small>
+                                    <small>{task.task.calendarDay}</small>
                                 </div>
                                 <div className="todo-todo">
-                                    {task['todos'].map((todo) => (
-                                        <div key={todo['id']}>
-                                            {todo['completed'] 
+                                    {task.todos.map((todo) => (
+                                        <div key={todo.id}>
+                                            {todo.completed 
                                                 ?
-                                                <input checked={true} data-key={'todo'} data-dayid={task['id']} data-id={todo['id']} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
+                                                <input checked={true} data-key={'todo'} data-dayid={task.task.id} data-id={todo.id} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
                                                 :
-                                                <input data-key={'todo'} data-dayid={task['id']} data-id={todo['id']} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
+                                                <input data-key={'todo'} data-dayid={task.task.id} data-id={todo.id} onChange={e => toggleCompleted(e.target)} type="checkbox" className={' form-check-input'}/>
                                             }
                                             
-                                            <small className={todo['completed'] ? 'checked' : ''}>{todo['todo']}</small>
+                                            <small className={todo.completed ? 'checked' : ''}>{todo.todo}</small>
                                         </div>
                                         )
                                     )}                            

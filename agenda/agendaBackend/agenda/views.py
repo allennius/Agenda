@@ -1,5 +1,5 @@
-from http.client import ResponseNotReady
-from os import stat
+from calendar import month
+import datetime as dt
 from sqlite3 import IntegrityError
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
@@ -124,9 +124,7 @@ class LoadTasks(APIView):
                     todosList.append(TodosSerializer(todo).data)
 
                 response.append({
-                    "id": day.id,
-                    "title": day.title,
-                    "date": day.calendarDay,
+                    'task': TodoDaySerializer(day).data,
                     "todos": todosList
                 })
 
@@ -164,9 +162,7 @@ class LoadTasks(APIView):
 
                 # add response to response
                 response.append({
-                    "id": day.id,
-                    "title": day.title,
-                    "date": day.calendarDay,
+                    'task': TodoDaySerializer(day).data,
                     "todos": todosList
                 })
             
@@ -204,3 +200,33 @@ class ToggleCompletedTasks(APIView):
             todo.save()
 
         return Response({'message': 'toggle completed'}, status=status.HTTP_200_OK)
+
+
+class AddTask(APIView):
+
+    def post(self,request):
+
+        # get variables needed to add task
+        user = User.objects.get(pk=request.data['userId'])
+        task = request.data['task']
+        todos = request.data['todos']
+
+        date = request.data['date']
+        month = request.data['month']
+        year = request.data['year']
+
+        # adding calendarday (month plus one to get right month)
+        calendarDay = dt.date(year, month+1, date)
+
+        
+        # add task to database
+        newTask = TodoDay(title=task, author=user, calendarDay=calendarDay)
+        newTask.save()
+
+        # add todos to database (if any)
+        if todos:
+            for todo in todos:
+                newTodo = Todos(todo=todo, day=newTask)
+                newTodo.save()
+
+        return Response({'message': 'task added'}, status=status.HTTP_200_OK)

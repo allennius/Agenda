@@ -21,6 +21,7 @@ function CalendarDay() {
             <NoPage />
         )
     }
+    
     // to get monthname from monthnumber
     const months = ["January", "Februari", "March", "April", "May", "June",
     "Juli", "August", "September", "October", "November", "December"
@@ -55,7 +56,6 @@ function CalendarDay() {
             .then(response => response.json())
             .then(data => {
                 setTasks(data)
-                console.log(data)
             })
             .catch(error => console.log(error))
         }
@@ -69,12 +69,6 @@ function CalendarDay() {
         setInputs(prevState => ({...prevState, [name]: value}))
     }
 
-    // handle form submit
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        alert(inputs.subject + " " + inputs.task)
-    }
-
     // state for toggle showing extra tasks
     const [showInput, setShowInput] = useState({})
     let i = 0
@@ -82,14 +76,11 @@ function CalendarDay() {
     // toggle state for showing or hiding extra tasks
     const addInput = (event) => {
         const i = event.target.dataset.key
-        console.log(event.target.dataset.key)
-        console.log(showInput[i])
 
         if (!showInput[i]) { 
             setShowInput(prevState => ({...prevState,[i]: true}))
         }else {
         console.log(showInput[i])
-
             setShowInput(prevState => ({...prevState, [i]: showInput[i] === false ? true : false}))
         }
     }
@@ -97,13 +88,13 @@ function CalendarDay() {
     // adding input field to page
     const addInputField = () => {
         i++
-        let stringName = "task" + i
+        let stringName = "todo" + i
         return (
             <>
                 <div className="form-group">
-                    <label>Task: 
+                    <label>Todo: 
                         <input 
-                            className="form-control"
+                            className="form-control todo-input"
                             type="text"
                             name={stringName}
                             value={inputs[stringName] || ""}
@@ -124,6 +115,70 @@ function CalendarDay() {
         )
     }
 
+    // toggle tasks when checked
+    const toggleCompleted = (e) => {
+
+        (e.checked && e.dataset.type === 'task') ? e.parentElement.parentElement.parentElement.classList.add('check') :
+            e.parentElement.parentElement.parentElement.classList.remove('check')
+
+        const checked = e.checked ? true : false
+        const dayId = e.dataset.dayid
+        const todoId = e.dataset.todoid ? e.dataset.todoid : null
+
+        fetch('/api/toggleCompletedTasks', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
+            body: JSON.stringify({
+                dayId: dayId,
+                todoId: todoId,
+                completed: checked  
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch(error => console.log(error))
+
+    }
+
+
+    // handle addtask formsubmit
+    const handleAddTask = (e) => {
+        e.preventDefault();
+
+        // create variables for task and todos(if any)
+        const task = document.querySelector('.task-input').value
+        const todos = []
+        document.querySelectorAll('.todo-input').forEach((todo) => {
+            if (todo.value) {todos.push(todo.value)}
+        })
+        
+
+        // add fetch request for adding task
+        if (localStorage.getItem('userId') && task) {
+            fetch('/api/addTask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify({
+                    userId: localStorage.getItem('userId'),
+                    task: task,
+                    todos: todos,
+                    date: day.day.getDate(),
+                    month: day.day.getMonth(),
+                    year: day.day.getFullYear()
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log(error))
+            window.location.reload()
+        }
+    }
+
 
     return (
         <div className="add-task-container">
@@ -132,56 +187,56 @@ function CalendarDay() {
                 <h6 className="header"> {day.day.getDate()} {months[day.day.getMonth()]}  {day.day.getFullYear()} </h6>
             </div>
             {tasks[0] &&     
-                <div className="tasks">
+                <div className="tasks" id="tasks">
                     {tasks.map((task) => {
                         return(  
-                            <div key={task.id} className="task"> 
-                                <p> {task.title} </p>
+                            <div key={task.task.id} className="task"> 
+                                <p> {task.task.title} </p>
                                 <div className="checkboxTodo">
                                 {task.todos.map((todo) => {
                                     return (
                                             <label key={todo.id}>
-                                                <input type="checkbox" id="todo" />
-                                                <span> {todo.todo} </span>
+                                                <input type="checkbox" id="todo" data-type={'todo'} data-todoid={todo.id} data-dayid={task.task.id} onChange={e => toggleCompleted(e.target)} />
+                                                <span className={todo.completed ? 'checked' : ''}> {todo.todo} </span>
                                             </label>
                                     )
                                 })}
                                 </div>
                                 <div className="checkboxTask">
                                     <label>
-                                        <input type="checkbox" id="task" />
-                                        <span> check {task.title} </span>
+                                        <input type="checkbox" id="task" data-type={'task'} data-dayid={task.task.id} onChange={e => toggleCompleted(e.target)} />
+                                        <span> check {task.task.title} </span>
                                     </label>
                                 </div>
                             </div>
                         )
                     })}
-                    <input type="button" value="update" className="btn-primary-calendarDay btn btn-primary" />
+                    <input onClick={() => window.location.reload()} type="button" value="update" className="btn-primary-calendarDay btn btn-primary" />
                 </div>
             }
             <div className="gap"> ---------- </div>
             <div className="task-form">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleAddTask}>
                     <div className="form-group">
-                        <label>Subject:
+                        <label>Task:
                             <input 
-                                className="form-control"
+                                className="form-control task-input"
                                 aria-describedby="Title for task"
                                 type="text"
-                                name="subject"
-                                value={inputs.subject || ""}
+                                name="task"
+                                value={inputs.task || ""}
                                 onChange={handleChange}
                             />
                         </label>
                     </div>
                     <div className="subject-task-gap"> ---------- </div>
                     <div className="form-group">
-                        <label>Task: 
-                            <input 
-                                className="form-control"
+                        <label>Todos: 
+                            <input
+                                className="form-control todo-input"
                                 type="text"
-                                name="task0"
-                                value={inputs.task0 || ""}
+                                name="todo0"
+                                value={inputs.todo0 || ""}
                                 onChange={handleChange}
                             />
                         </label>
@@ -192,10 +247,10 @@ function CalendarDay() {
                             <input type="button" data-key="0" onClick={addInput} className="btn-secondary-calendarDay btn btn-secondary" value="+" />
                         </div>
                         }
-                    <input type="submit" className="btn-primary-calendarDay btn btn-primary" value="Add Task" />
+                    <input  type="submit" className="btn-primary-calendarDay btn btn-primary" value="Add Task" />
                 </form>
             </div>
-        </ div>
+        </div>
     )
 }
 
