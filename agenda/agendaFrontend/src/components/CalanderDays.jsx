@@ -39,9 +39,11 @@ function CalendarDays(props) {
         }
     }, [props])
 
-
+    
+    // load tasks to calendar month
     const loadTasksToCalendar = (day) => {
 
+        // counter to check if more than 1 task per day and title of task
         let taskCounter = 0
         let title = ''
 

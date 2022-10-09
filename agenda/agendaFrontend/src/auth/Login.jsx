@@ -5,26 +5,29 @@ import "../styles/login-register.css"
 
 
 function Login() {
-
+    
+    // variables for login form
     const [username, setUsername] = useState('');
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
 
-    // console.log(localStorage.getItem('token'))
-    // console.log(user)
-
+    // testing naviage instead of window.location.replace
     const navigate = useNavigate();
-    // localStorage.setItem('token', "hej")
+
+    // if user is logged on navigate to homepage
     useEffect(() => {
         if (localStorage.getItem('userId') !== null) {
             navigate('/')
         }
     }, [])
 
+    // set error message to blank if username or password updates
     useEffect(() => {
         setErrMsg('');
     }, [username, pwd])
 
+    
+    // handle login
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -52,6 +55,8 @@ function Login() {
                     console.log(data['success'])
                     console.log(data['userdata']['id'])
                     console.log(data['userdata']['username'])
+
+                    // clear userId - set userId - go to homepage
                     localStorage.clear();
                     localStorage.setItem('userId', data['userdata']['id'])
                     window.location.replace('/')

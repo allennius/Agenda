@@ -5,8 +5,10 @@ import "../styles/tasks.css"
 
 const Tasks = () => {
 
+    // tasks
     const [tasks, setTasks] = useState([])
     
+    // load all tasks for user after page render
     useEffect(() => {
         if (localStorage.getItem('userId')){
             const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -35,6 +37,7 @@ const Tasks = () => {
     }, []);
 
 
+    // render all tasks/todos to page
     const loadTodos = () => {
         return (
             <>
@@ -75,14 +78,15 @@ const Tasks = () => {
     }
  
 
+    // toggles completed false/true
     const toggleCompleted = (e) => {
 
+        // toggle class depending on checked or not
         (e.checked && e.dataset.key === 'todoDay') ? e.parentElement.parentElement.classList.add('checked') :
             e.parentElement.parentElement.classList.remove('checked')
 
-            e.checked = e.checked ? true : false
 
-
+        // data to send in request, depending on task or todo was checked
         const dayId = (e.dataset.dayid) ? e.dataset.dayid : e.dataset.id
         const todoId = (e.dataset.dayid) ? e.dataset.id : null
 
@@ -118,6 +122,7 @@ const Tasks = () => {
                 <div><h3>Nothing todo</h3></div>
                 }
 
+            {/* Update just a page reload, re renders tasks - the ones that was checked will already be completed */}
             <input onClick={() => window.location.reload()} type="button" className="btn btn-primary" value="Update" />
         </div>
     )

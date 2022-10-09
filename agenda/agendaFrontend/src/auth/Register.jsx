@@ -5,23 +5,27 @@ import "../styles/login-register.css"
 
 function Register() {
 
+    // set variables for loggin in
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [errMsg, setErrMsg] = useState('')
 
+    // check if user is logged on
     useEffect(() => {
         if (localStorage.getItem('userId') !== null) {
             window.location.replace('/')
         }
     })
 
+    // set error message to zero if username,email,password or confirm is updated
     useEffect(() => {
         setErrMsg('')
     },[username, email, password, confirmPassword])
 
 
+    // handle registration
     const handleSubmit = (e) => {
         e.preventDefault()
 
@@ -51,6 +55,8 @@ function Register() {
                     console.log('success')
                     localStorage.clear()
                     localStorage.setItem('userId', data['userData']['id'])
+
+                    // load homepage
                     window.location.replace('/')
                 }
             })

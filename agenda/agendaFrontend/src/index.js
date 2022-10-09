@@ -11,18 +11,17 @@ import CalendarDay from "./components/CalendarDay";
 
 export default function App() {
 
+    // login as homepage standard
     const [homePage, setHomePage] = useState(<Login />)
-    // localStorage.clear()
-    // localStorage.setItem('token', true)
 
+    // if user is logged on, set homepage to Home(Calendar)
     useEffect(() => {
         if (localStorage.getItem('userId') !== null) {
             setHomePage(<Home />)
         }
     }, [])
 
-    // setHomePage(<Login />)
-
+    // app browser router with one routes with miltiple route elements one for each page in app
     return (
         <BrowserRouter>
             <Routes>
@@ -31,7 +30,6 @@ export default function App() {
                     <Route path="Tasks" element={<Tasks />} />
                     <Route path="CalendarDay" element={<CalendarDay />} />
                     <Route path="Login" element={<Login />} />
-
                     <Route path="Register" element={<Register />} />
                     <Route path="*" element={<NoPage />} />
                 </Route>

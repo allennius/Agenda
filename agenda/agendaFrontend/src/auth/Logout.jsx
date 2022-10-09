@@ -3,13 +3,11 @@ import React from "react";
 
 function Logout(props) {
 
-    console.log(localStorage['userId']) 
-    console.log(props.csrftoken)
-
-    
+    // get csrftoken and userId
     const csrftoken = props.csrftoken
     const user = {userId: localStorage.getItem('userId')}
-    console.log(JSON.stringify(user))
+
+    // handle logout
     fetch('/api/auth/logout', {
         method: "POST",
         headers: {
@@ -22,6 +20,8 @@ function Logout(props) {
         .then(data => {
             console.log(data)
             console.log(data['message'])
+
+            // clear userId and go to homepage
             localStorage.clear()
             window.location.replace('/')
         })

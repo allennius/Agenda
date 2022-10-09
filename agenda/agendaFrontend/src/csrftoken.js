@@ -1,5 +1,7 @@
 import React from 'react';
 
+// get csrftoken as per django docs
+// https://docs.djangoproject.com/en/4.0/ref/csrf/
 function getCookie(name) {
     let cookieValue = null;
 

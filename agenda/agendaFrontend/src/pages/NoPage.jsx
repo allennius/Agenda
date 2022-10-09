@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+
+// page when user goes to wrong adress or tries to access wrong way
 const Nopage = () => {
     return (
         <>

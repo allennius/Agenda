@@ -37,6 +37,7 @@ function CalendarDay() {
         loadTasks()
     }, [])
 
+    // load tasks to calendarDay
     const loadTasks = () => {
         if (localStorage.getItem('userId')) {
             fetch('/api/loadTasks', {
@@ -117,14 +118,16 @@ function CalendarDay() {
 
     // toggle tasks when checked
     const toggleCompleted = (e) => {
-
+        // toggle class on checkbox
         (e.checked && e.dataset.type === 'task') ? e.parentElement.parentElement.parentElement.classList.add('check') :
             e.parentElement.parentElement.parentElement.classList.remove('check')
 
+        // variables to send in request.
         const checked = e.checked ? true : false
         const dayId = e.dataset.dayid
         const todoId = e.dataset.todoid ? e.dataset.todoid : null
 
+        // request that toggles todo and/or task
         fetch('/api/toggleCompletedTasks', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
@@ -186,6 +189,8 @@ function CalendarDay() {
             <div className="task-header">
                 <h6 className="header"> {day.day.getDate()} {months[day.day.getMonth()]}  {day.day.getFullYear()} </h6>
             </div>
+
+            {/* if tasks are loaded */}
             {tasks[0] &&     
                 <div className="tasks" id="tasks">
                     {tasks.map((task) => {
@@ -214,6 +219,8 @@ function CalendarDay() {
                     <input onClick={() => window.location.reload()} type="button" value="update" className="btn-primary-calendarDay btn btn-primary" />
                 </div>
             }
+
+            {/* form to add new task */}
             <div className="gap"> ---------- </div>
             <div className="task-form">
                 <form onSubmit={handleAddTask}>
