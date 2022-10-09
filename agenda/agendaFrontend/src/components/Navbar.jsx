@@ -14,12 +14,37 @@ function Navbar() {
     // user logged on false as standard
     const [isAuth, setIsAuth] = useState(false)
 
-    // set as true if user is logged in
+    // when page is rendered
     useEffect(() => {
+        // set as true if user is logged in
         if (localStorage.getItem('userId') !== null) {
             setIsAuth(true)
         }
+
+        // toggle active class for navbar links
+        document.querySelector('#navbar').addEventListener('click', (event) => {
+
+            // check if user clicked on link else return
+            const link = event.target.nodeName === 'A';
+            if(!link){return;}
+
+            // toggle active class
+            ToggleActiveLink(event.target)
+
+        })
     }, [])
+
+    const ToggleActiveLink = (clickedLink) => {
+
+        // remove active class from all links
+        document.querySelectorAll('.nav-link').forEach((link) => {
+            link.classList.remove('active')
+        })
+
+        // add to clicked link
+        clickedLink.classList.add('active')
+
+    }
 
     // render logout function when logout is clicked
     const Logoutnav = () => {
@@ -36,7 +61,7 @@ function Navbar() {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul id='navbar' className="navbar-nav me-auto mb-2 mb-lg-0">
 
                         {/* if user is not logged in */}
                         {isAuth !== true ? (
