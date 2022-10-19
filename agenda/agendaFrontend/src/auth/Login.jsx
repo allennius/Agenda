@@ -52,9 +52,6 @@ function Login() {
                     setErrMsg(data['error'])
                 }
                 if (data['success']) {
-                    console.log(data['success'])
-                    console.log(data['userdata']['id'])
-                    console.log(data['userdata']['username'])
 
                     // clear userId - set userId - go to homepage
                     localStorage.clear();

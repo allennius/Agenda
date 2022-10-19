@@ -7,7 +7,7 @@ import Tasks from "./pages/Tasks";
 import NoPage from "./pages/NoPage";
 import Register from "./auth/Register";
 import Login from "./auth/Login";
-import CalendarDay from "./components/CalendarDay";
+import CalendarDay from "./pages/CalendarDay";
 
 export default function App() {
 

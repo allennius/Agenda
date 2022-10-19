@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from 'react-router-dom'
 import { useState, useEffect } from "react";
-import NoPage from "../pages/NoPage";
+import NoPage from "./NoPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap/dist/js/bootstrap.min.js";
 import "../styles/calendarDay.css"
@@ -66,7 +66,7 @@ function CalendarDay() {
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        console.log(inputs)
+    
         setInputs(prevState => ({...prevState, [name]: value}))
     }
 
@@ -81,7 +81,6 @@ function CalendarDay() {
         if (!showInput[i]) { 
             setShowInput(prevState => ({...prevState,[i]: true}))
         }else {
-        console.log(showInput[i])
             setShowInput(prevState => ({...prevState, [i]: showInput[i] === false ? true : false}))
         }
     }

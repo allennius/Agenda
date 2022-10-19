@@ -1,0 +1,7 @@
+Django
+Djangorestframework
+Django-cors-headers
+Node.js
+ReactDOM
+react-router-dom
+bootstrap - npm install --save bootstrap@latest

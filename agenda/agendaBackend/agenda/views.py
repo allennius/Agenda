@@ -1,12 +1,10 @@
-from calendar import month
 import datetime as dt
-from sqlite3 import IntegrityError
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+
 
 from .serializers import UserSerializer, TodoDaySerializer, TodosSerializer
 from .models import User, TodoDay, Todos
@@ -34,7 +32,6 @@ class Login(APIView):
         # attempt to sign in user
         username = request.data['username']
         password = request.data['password']
-        print(username, password)
         user = authenticate(request, username=username, password=password)
 
         # check if authenticateion is succesful
@@ -172,6 +169,7 @@ class LoadTasks(APIView):
         # else send back failed response
         response = [{'error': 'failed request'}]
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ToggleCompletedTasks(APIView):
 

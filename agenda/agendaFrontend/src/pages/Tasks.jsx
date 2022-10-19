@@ -10,6 +10,12 @@ const Tasks = () => {
     
     // load all tasks for user after page render
     useEffect(() => {
+
+        loadTasks()
+
+    }, []);
+
+    const loadTasks = () => {
         if (localStorage.getItem('userId')){
             const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
             fetch("/api/loadTasks", {
@@ -34,7 +40,7 @@ const Tasks = () => {
             })
             .catch(error => console.log(error))
         }
-    }, []);
+    }
 
 
     // render all tasks/todos to page

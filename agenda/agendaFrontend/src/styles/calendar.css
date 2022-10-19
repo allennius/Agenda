@@ -95,7 +95,6 @@
 .next-month {
     transform: rotate(135deg);
 }
-
 .todo-in-calendar {
     margin: auto;
     position: relative;
@@ -151,11 +150,11 @@
 /* screen less then 600px */
 @media only screen and (max-width: 600px) {
     .calendar {
-        width: 310px;
+        width: 280px;
     }
     .calendar-header {
         width: 280px;
-        margin: 1.5em;
+        margin: 1.5em 0;
         font-size: x-small;
     }
     .calendar-header h3 {

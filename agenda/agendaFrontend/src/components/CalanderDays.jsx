@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import CSRFTOKEN from "../csrftoken";
-// import CalendarDay from "./CalendarDay";
+
 
 
 function CalendarDays(props) {
@@ -14,6 +14,10 @@ function CalendarDays(props) {
 
     // fetch this months tasks, update when props change
     useEffect(() => {
+        loadTasks()
+    }, [props])
+
+    const loadTasks = () => {
         if (localStorage.getItem('userId')){
             fetch('/api/loadTasks', {
                 method: 'POST',
@@ -37,7 +41,7 @@ function CalendarDays(props) {
             .catch(error => console.log(error))
             
         }
-    }, [props])
+    }
 
     
     // load tasks to calendar month
